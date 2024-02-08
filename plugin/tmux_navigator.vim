@@ -55,6 +55,7 @@ if !exists("g:tmux_navigator_no_wrap")
 endif
 
 let s:pane_position_from_direction = {'h': 'left', 'j': 'bottom', 'k': 'top', 'l': 'right'}
+let s:pane_split_from_direction = {'h': 'bh', 'j': 'v -l 10', 'k': 'bv -l 10', 'l': 'h' }
 
 function! s:TmuxOrTmateExecutable()
   return (match($TMUX, 'tmate') != -1 ? 'tmate' : 'tmux')
@@ -127,7 +128,7 @@ function! s:TmuxAwareNavigate(direction)
       let l:args .= ' -Z'
     endif
     if g:tmux_navigator_no_wrap == 1
-      let args = 'if -F "#{pane_at_' . s:pane_position_from_direction[a:direction] . '}" "" "' . args . '"'
+        let args = 'if -F "#{&&:#{pane_at_' . s:pane_position_from_direction[a:direction] . '}, #{window_zoomed_flag}}" "split-window -' . s:pane_split_from_direction[a:direction] .'" "' . args . '"'
     endif
     silent call s:TmuxCommand(args)
     if s:NeedsVitalityRedraw()
